@@ -2,6 +2,7 @@ package com.chintanrathod.domain.repository
 
 import com.chintanrathod.domain.common.Resource
 import com.chintanrathod.domain.models.browse.PokemonListData
+import com.chintanrathod.domain.models.detail.PokemonDetailData
 
 /**
  * Repository interface for accessing Pokemon-related data.
@@ -25,4 +26,15 @@ interface PokemonRepository {
      * @return [Resource] containing [PokemonListData] on success, or an error state otherwise.
      */
     suspend fun getPokemonList(url: String): Resource<PokemonListData>
+
+    /**
+     * This method will fetch the details using id of the Pokemon
+     *
+     * Ex.
+     * - https://pokeapi.co/api/v2/pokemon/1
+     *
+     * @param id Id of the Pokemon
+     * @return [Resource] containing [PokemonDetailData] on success, or an error state otherwise.
+     */
+    suspend fun getPokemonDetail(id: Int): Resource<PokemonDetailData>
 }
