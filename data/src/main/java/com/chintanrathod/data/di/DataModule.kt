@@ -2,8 +2,10 @@ package com.chintanrathod.data.di
 
 import com.chintanrathod.data.datasource.PokemonRemoteDataSource
 import com.chintanrathod.data.repository.PokemonDataRepository
+import com.chintanrathod.data.usecases.GetPokemonDetailUseCaseImpl
 import com.chintanrathod.data.usecases.GetPokemonListUseCaseImpl
 import com.chintanrathod.domain.repository.PokemonRepository
+import com.chintanrathod.domain.usecase.GetPokemonDetailUseCase
 import com.chintanrathod.domain.usecase.GetPokemonListUseCase
 import dagger.Module
 import dagger.Provides
@@ -45,5 +47,19 @@ object DataModule {
         pokemonRepository: PokemonRepository
     ): GetPokemonListUseCase {
         return GetPokemonListUseCaseImpl(pokemonRepository)
+    }
+
+    /**
+     * Provides an implementation of [GetPokemonListUseCase] that uses the repository.
+     *
+     * @param pokemonRepository The repository used to get Pokémon list data.
+     * @return An instance of [GetPokemonListUseCase].
+     */
+    @Provides
+    @Singleton
+    fun provideGetPokemonDetailUseCase(
+        pokemonRepository: PokemonRepository
+    ): GetPokemonDetailUseCase {
+        return GetPokemonDetailUseCaseImpl(pokemonRepository)
     }
 }

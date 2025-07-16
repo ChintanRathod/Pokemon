@@ -23,4 +23,14 @@ internal class PokemonDataRepository @Inject constructor(
     override suspend fun getPokemonList(url: String) = networkBoundResource(
         network = { network.getPokemonList(url)},
     )
+
+    /**
+     * Fetches a detail of Pokemon from the remote source using the given [id].
+     *
+     * @param id Id of the Pokemon.
+     * @return A [Resource] wrapping the result or error.
+     */
+    override suspend fun getPokemonDetail(id: Int) = networkBoundResource(
+        network = { network.getPokemonDetail(id = id)},
+    )
 }
