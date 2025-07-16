@@ -160,4 +160,116 @@ class PokemonRESTDataSourceTest {
         assertTrue(result is NetworkResponse.ClientError)
         assertEquals(-1, (result as NetworkResponse.ClientError).code)
     }
+
+    //
+
+    /*
+    Check for 200 success parsing
+     */
+    @Test
+    fun getPokemonDetail_returns_Success_200() = runBlocking {
+
+        val mockJson = """
+            {
+                "base_experience": 64,
+                "height": 7,
+                "weight": 7,
+                "name": "bulbasaur",
+                "sprites": {
+                    "other": {
+                        "official-artwork": {
+                            "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
+                        }
+                    }
+                }
+            }
+        """.trimIndent()
+
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody(mockJson)
+        )
+
+        val result = dataSource.getPokemonDetail(id = 1)
+
+        assertTrue(result is NetworkResponse.Success)
+        val pokemonDetail = (result as NetworkResponse.Success).response
+        assertEquals(7, pokemonDetail.height)
+        assertEquals("bulbasaur", pokemonDetail.name)
+        assertEquals("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png", pokemonDetail.image)
+    }
+
+    /*
+    Check for bad request
+     */
+    @Test
+    fun getPokemonDetail_returns_ClientError_400() = runBlocking {
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(400)
+                .setBody("Bad Request")
+        )
+
+        val result = dataSource.getPokemonDetail(id = 1)
+
+        assertTrue(result is NetworkResponse.ClientError)
+        assertEquals(400, (result as NetworkResponse.ClientError).code)
+    }
+
+    /*
+    Check for server error 500
+     */
+    @Test
+    fun getPokemonDetail_returns_ClientError_500() = runBlocking {
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(500)
+                .setBody("Bad Request")
+        )
+
+        val result = dataSource.getPokemonDetail(id = 1)
+
+        assertTrue(result is NetworkResponse.ServerError)
+        assertEquals(500, (result as NetworkResponse.ServerError).code)
+    }
+
+    /*
+    Check for No internet
+     */
+    @Test
+    fun getPokemonDetail_returns_NoInternet() = runBlocking {
+        mockWebServer.shutdown()
+
+        val result = dataSource.getPokemonDetail(id = 1)
+
+        assertTrue(result is NetworkResponse.NoInternet)
+    }
+
+    /*
+    Following test we will try to break by passing wrong json
+     */
+    @Test
+    fun getPokemonDetail_returns_Success_withParsingError() = runBlocking {
+        // To mock parsing error, removed array []
+        val mockJson = """
+             {
+                "base_experience": 64,
+                "height": 7,
+                "weight": 7,
+                "name": "bulbasaur",
+            }
+        """.trimIndent()
+
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody(mockJson)
+        )
+
+        val result = dataSource.getPokemonDetail(id = 1)
+
+        assertTrue(result is NetworkResponse.ClientError)
+        assertEquals(-1, (result as NetworkResponse.ClientError).code)
+    }
 }

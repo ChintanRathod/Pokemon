@@ -2,6 +2,7 @@ package com.chintanrathod.network.pokemon
 
 import com.chintanrathod.data.datasource.PokemonRemoteDataSource
 import com.chintanrathod.domain.models.browse.PokemonListData
+import com.chintanrathod.domain.models.detail.PokemonDetailData
 import com.chintanrathod.network.common.retrofitApiCall
 import com.chintanrathod.network.pokemon.api.PokemonService
 import javax.inject.Inject
@@ -32,6 +33,27 @@ class PokemonRESTDataSource @Inject constructor(
                 next = it.next,
                 previous = it.previous,
                 results = it.results.map { remote -> remote.transform() },
+            )
+        }
+    )
+
+    /**
+     * Fetches detail of Pokémon from the network using Retrofit.
+     *
+     * @param id The id of the Pokemon.
+     * @return A [NetworkResponse] containing either success or error.
+     */
+    override suspend fun getPokemonDetail(id: Int) = retrofitApiCall(
+        call = {
+            service.getPokemonDetail(id = id)
+        },
+        parse = {
+            PokemonDetailData(
+                height = it.height,
+                weight = it.weight,
+                baseExperience = it.baseExperience,
+                image = it.sprites.other.officialArtWork.frontDefault,
+                name = it.name
             )
         }
     )
