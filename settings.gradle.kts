@@ -7,6 +7,7 @@ pluginManagement {
                 includeGroupByRegex("androidx.*")
             }
         }
+        google()
         mavenCentral()
         gradlePluginPortal()
     }
@@ -24,6 +25,4 @@ include(":app")
 include(":domain")
 include(":data")
 include(":network")
-include(":domain")
-include(":data")
-include(":domain")
+include(":di")
