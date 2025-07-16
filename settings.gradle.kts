@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Pokemon"
 include(":app")
+include(":domain")
