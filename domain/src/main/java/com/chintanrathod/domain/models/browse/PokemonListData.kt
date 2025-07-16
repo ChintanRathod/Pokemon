@@ -12,7 +12,7 @@ data class PokemonListData(
     val count: Int,
     val next: String?,
     val previous: String?,
-    val results: List<ListItem>?,
+    val results: List<PokemonListItem>?,
 )
 
 /**
@@ -21,7 +21,7 @@ data class PokemonListData(
  * @property name The name of the Pokemon.
  * @property url API URL to fetch detailed information about the Pokemon.
  */
-data class ListItem (
+data class PokemonListItem (
     val name: String,
     val url: String
 )
