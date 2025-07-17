@@ -54,7 +54,10 @@ fun PokemonListScreen(
 
         Column (
             modifier = Modifier.fillMaxSize()
-                .padding(top = padding.calculateTopPadding())
+                .padding(
+                    top = padding.calculateTopPadding(),
+                    bottom = padding.calculateBottomPadding()
+                )
         ){
             BasicTextField(
                 value = searchQuery,
