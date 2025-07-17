@@ -7,6 +7,7 @@ pluginManagement {
                 includeGroupByRegex("androidx.*")
             }
         }
+        google()
         mavenCentral()
         gradlePluginPortal()
     }
@@ -21,3 +22,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Pokemon"
 include(":app")
+include(":domain")
+include(":data")
+include(":network")
+include(":di")
