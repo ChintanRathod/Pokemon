@@ -1,5 +1,10 @@
 package com.chintanrathod.pokemon.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chintanrathod.domain.common.Resource
@@ -11,10 +16,13 @@ import com.chintanrathod.domain.usecase.GetPokemonListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 /**
@@ -54,6 +62,22 @@ class PokemonViewModel @Inject constructor(
      */
     private val _pokemonDetail = MutableStateFlow<PokemonDetailData?>(null)
     val pokemonDetail: StateFlow<PokemonDetailData?> = _pokemonDetail.asStateFlow()
+
+    /*
+    This object helps store temporary search query
+     */
+    var searchQuery by mutableStateOf(TextFieldValue("", TextRange(0)))
+        private set
+
+    private val _searchResults = MutableStateFlow<List<PokemonListItem>>(emptyList())
+    val searchResults: StateFlow<List<PokemonListItem>> = _searchResults
+
+    /*
+    This Job will be a coroutine which do Bounce effect for search with some delays
+    This helps to allow user to type meaningful word before we bombarding on search results
+    This also helps to lower the queries and processing and displaying limited searches
+     */
+    private var searchJob: Job? = null
 
     /*
     we need to fetch initial list of pokemon when application launched
@@ -149,6 +173,34 @@ class PokemonViewModel @Inject constructor(
             is Resource.Loading -> {
                 // Handle loading state
             }
+        }
+    }
+
+    fun onSearchQueryChange(newValue: TextFieldValue) {
+        searchQuery = newValue.copy(selection = TextRange(newValue.text.length))
+        performSearch(newValue.text)
+    }
+
+    private fun performSearch(query: String) {
+        if (query.isBlank()) {
+            _searchResults.value = emptyList()
+            return
+        }
+
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch (Dispatchers.IO) {
+            delay(300)
+            val splitTokens = query.split(" ")
+
+            val searchResult = _pokemonList.value.filter { pokemon ->
+                splitTokens.all { string ->
+                    // Check for name
+                    pokemon.name.contains(string, ignoreCase = true)
+                }
+            }
+
+            _searchResults.value = searchResult
+
         }
     }
 }

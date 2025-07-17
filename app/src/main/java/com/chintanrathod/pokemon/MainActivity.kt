@@ -56,11 +56,16 @@ class MainActivity : ComponentActivity() {
 
         // get pokemon list here from view model
         val pokemonList by viewModel.pokemonList.collectAsState()
+        val searchResults by viewModel.searchResults.collectAsState()
+        var searchQuery = viewModel.searchQuery
 
         NavHost(navController = navHostController, startDestination = "PokemonList") {
             composable(route = "PokemonList") {
                 PokemonListScreen(
                     pokemonList = pokemonList,
+                    searchQuery = searchQuery,
+                    viewModel = viewModel,
+                    searchResults = searchResults,
                     onPokemonSelect = { pokemonId ->
                         navHostController.navigate("PokemonDetail/$pokemonId")
                     }
