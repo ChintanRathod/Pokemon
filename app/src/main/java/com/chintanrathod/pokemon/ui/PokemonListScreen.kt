@@ -15,6 +15,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.chintanrathod.domain.models.browse.PokemonListItem
 
@@ -82,6 +83,7 @@ fun ListItemView(
             }
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
+            .testTag("PokemonItem")
     ) {
         Text(
             modifier = Modifier
