@@ -27,6 +27,7 @@ import com.chintanrathod.domain.models.browse.PokemonListItem
 @Composable
 fun PokemonListScreen(
     pokemonList: List<PokemonListItem>,
+    onPokemonSelect:(Int) -> Unit
 ) {
 
     Scaffold(
@@ -51,6 +52,7 @@ fun PokemonListScreen(
                 ListItemView(
                     index = index.inc(),
                     item = item,
+                    onPokemonSelect = onPokemonSelect
                 )
                 HorizontalDivider(
                     color = Gray
@@ -69,12 +71,14 @@ fun PokemonListScreen(
 @Composable
 fun ListItemView(
     index: Int,
-    item: PokemonListItem
+    item: PokemonListItem,
+    onPokemonSelect:(Int) -> Unit
 ) {
     Column(
         modifier = Modifier
             .clickable {
-                // Do selection of pokemon
+                val id = item.url.trimEnd('/').substringAfterLast('/').toInt()
+                onPokemonSelect(id)
             }
             .fillMaxWidth()
             .padding(horizontal = 16.dp)

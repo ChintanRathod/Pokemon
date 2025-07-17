@@ -71,6 +71,9 @@ dependencies {
     implementation(libs.hilt.android.gradle.plugin)
     ksp(libs.hilt.android.compiler)
 
+    // koil
+    implementation(libs.coil.compose)
+
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockk)

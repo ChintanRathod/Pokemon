@@ -11,9 +11,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.chintanrathod.pokemon.ui.PokemonDetailScreen
 import com.chintanrathod.pokemon.ui.PokemonListScreen
 import com.chintanrathod.pokemon.ui.theme.PokemonTheme
 import com.chintanrathod.pokemon.viewmodel.PokemonViewModel
@@ -58,6 +61,21 @@ class MainActivity : ComponentActivity() {
             composable(route = "PokemonList") {
                 PokemonListScreen(
                     pokemonList = pokemonList,
+                    onPokemonSelect = { pokemonId ->
+                        navHostController.navigate("PokemonDetail/$pokemonId")
+                    }
+                )
+            }
+
+            composable(
+                route = "PokemonDetail/{pokemonId}",
+                arguments = listOf(navArgument("pokemonId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val pokemonId = backStackEntry.arguments?.getInt("pokemonId") ?: return@composable
+
+                PokemonDetailScreen(
+                    pokemonId = pokemonId,
+                    viewModel = viewModel
                 )
             }
         }

@@ -13,6 +13,6 @@ data class PokemonDetailData(
     val height: Int,
     val weight: Int,
     val baseExperience: Int,
-    val image: String?,
-    val name: String?,
+    val image: String,
+    val name: String,
 )

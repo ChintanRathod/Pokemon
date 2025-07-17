@@ -5,6 +5,8 @@ import com.chintanrathod.domain.common.AppError
 import com.chintanrathod.domain.common.Resource
 import com.chintanrathod.domain.models.browse.PokemonListData
 import com.chintanrathod.domain.models.browse.PokemonListItem
+import com.chintanrathod.domain.models.detail.PokemonDetailData
+import com.chintanrathod.domain.usecase.GetPokemonDetailUseCase
 import com.chintanrathod.domain.usecase.GetPokemonListUseCase
 import com.chintanrathod.pokemon.viewmodel.PokemonViewModel
 import io.mockk.coEvery
@@ -33,6 +35,7 @@ class PokemonViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
 
     private lateinit var getPokemonListUseCase: GetPokemonListUseCase
+    private lateinit var getPokemonDetailUseCase: GetPokemonDetailUseCase
 
     private lateinit var viewModel: PokemonViewModel
 
@@ -43,14 +46,16 @@ class PokemonViewModelTest {
         // Set the main dispatcher to our test dispatcher for coroutine testing
         Dispatchers.setMain(testDispatcher)
 
-        // Initialize the mock for GetPokemonListUseCase
+        // Initialize the mock for GetPokemonListUseCase & GetPokemonDetailUseCase
         // Using MockK:
         getPokemonListUseCase = mockk(relaxed = true)
-        // Using Mockito-Kotlin:
-        // GetPokemonListUseCase = mock()
+        getPokemonDetailUseCase = mockk(relaxed = true)
 
         // Initialize the ViewModel with the mocked dependency
-        viewModel = PokemonViewModel(getPokemonListUseCase, testDispatcher)
+        viewModel = PokemonViewModel(
+            getPokemonListUseCase,
+            getPokemonDetailUseCase,
+            testDispatcher)
     }
 
     @After
@@ -115,5 +120,29 @@ class PokemonViewModelTest {
         advanceUntilIdle()
 
         assertTrue(viewModel.pokemonList.value.isEmpty())
+    }
+
+    @Test
+    fun loadPokemonDetail_emits_list_when_use_case_returns_success() = runTest {
+        val dummyPokemonDetailData = PokemonDetailData(
+            height = 100,
+            weight = 60,
+            baseExperience = 55,
+            image = "url",
+            name = "name"
+        )
+
+        coEvery { getPokemonDetailUseCase(id = 1) } returns Resource.Success(dummyPokemonDetailData)
+
+        viewModel.loadPokemonDetail(id = 1)
+
+        advanceUntilIdle()
+
+        val pokemonDetail = viewModel.pokemonDetail.value
+
+        assertEquals(dummyPokemonDetailData, pokemonDetail)
+        assertEquals(100, pokemonDetail?.height)
+        assertEquals(60, pokemonDetail?.weight)
+        assertEquals(55, pokemonDetail?.baseExperience)
     }
 }
